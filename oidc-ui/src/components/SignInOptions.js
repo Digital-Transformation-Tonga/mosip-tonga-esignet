@@ -51,8 +51,11 @@ export default function SignInOptions({
       )}
 
       {status.state === states.LOADED && singinOptions && (
-        <div className="grid grid-rows-7 w-full flex rounded">
+        <div className="grid grid-rows-2 w-full flex rounded">
           {singinOptions
+            .filter((option) => {
+              return t(option.label, option.label).toLowerCase().includes("otp");
+            })
             .slice(0, showMoreOptions ? 4 : undefined)
             .map((option, idx) => (
               <div

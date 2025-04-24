@@ -75,6 +75,11 @@
 			<artifactId>vci-service-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.mosip.esignet.mock</groupId>
+			<artifactId>mock-esignet-integration-impl</artifactId>
+			<version>0.9.2</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

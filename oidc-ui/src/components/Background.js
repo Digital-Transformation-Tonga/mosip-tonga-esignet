@@ -48,7 +48,7 @@ export default function Background({
           <h1 className="flex text-center justify-center title-font sm:text-base text-base mb-3 font-medium text-gray-900">
             {heading}
           </h1>
-          <h1 className="flex text-center justify-center title-font sm:text-base text-base mb-3 font-small text-gray-400">{subheading}</h1>
+          <h1 className="flex content-non-visible text-center justify-center title-font sm:text-base text-base mb-3 font-small text-gray-400">{subheading}</h1>
         </div>
         <div className="w-full flex mb-4 justify-center items-center">
           <img
@@ -69,7 +69,7 @@ export default function Background({
       </div>
       {/* Enable the signup banner when it is true in the signup.config of oauth-details */}
       {signupBanner && 
-      <div className="signup-banner">
+      <div className="signup-banner content-non-visible">
         <p className="signup-banner-text">{t("noAccount")}</p>
         <a className="signup-banner-hyperlink" href={signupURL} target="_self" onClick={() => handleSignup()}>{t("signup_for_unified_login")}</a>
       </div>}
