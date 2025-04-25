@@ -1,4 +1,5 @@
 pipeline {
+    agent none
     environment {
         PROJECT = 'egovdigitaltonga'
         APP_NAME = 'mosip-oidc-ui'
@@ -19,17 +20,16 @@ pipeline {
         ARTIFACTORY_URL = 'http://mosip-file-server.mosip-file-server'
         IMAGE_NAME = 'esignet-ui'
     }
-    agent none
     options {
         skipStagesAfterUnstable()
         disableConcurrentBuilds()
     }
     stages {
-        stage('Building & Pushing Image') {
+        stage('Building & Deploy Image') {
             agent any
             steps {
-                sh 'docker login -u ${CIR_USER} -p ${CIR_PW}'
                 dir('oidc-ui') {
+                    sh 'docker login -u ${CIR_USER} -p ${CIR_PW}'
                     sh """
                         docker build --no-cache \\
                             --build-arg sign_in_with_esignet_plugin_url="${SIGN_IN_PLUGIN_URL}" \\
@@ -44,10 +44,10 @@ pipeline {
                             -t ${IMAGE_TAG} .
                     """
                     sh 'docker push ${IMAGE_TAG}'
-                    sh 'docker image rm ${IMAGE_TAG}'
                 }
             }
         }
+
         stage('Deploy cluster') {
             agent {
                 docker {
