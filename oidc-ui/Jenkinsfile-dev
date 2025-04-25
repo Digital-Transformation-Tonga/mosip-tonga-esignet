@@ -10,7 +10,7 @@ pipeline {
 
         // Docker build arguments
         SIGN_IN_PLUGIN_URL = 'https://esignet.dst-dev.mosip.net/plugin.zip'
-        OIDC_UI_PUBLIC_URL = ''
+        OIDC_UI_PUBLIC_URL = ' '
         UI_DEFAULT_THEME = 'default'
         DEFAULT_LANG = 'en'
         DEFAULT_WELLKNOWN = 'https://esignet.dst-dev.mosip.net/.well-known/openid-configuration'
@@ -33,7 +33,7 @@ pipeline {
                     sh """
                         docker build --no-cache \\
                             --build-arg sign_in_with_esignet_plugin_url="${SIGN_IN_PLUGIN_URL}" \\
-                            --build-arg oidcUIPublicUrl="${OIDC_UI_PUBLIC_URL}" \\
+                            --build-arg oidcUIPublicUrl="" \\
                             --build-arg uiDefaultTheme="${UI_DEFAULT_THEME}" \\
                             --build-arg defaultLang="${DEFAULT_LANG}" \\
                             --build-arg defaultWellknown="${DEFAULT_WELLKNOWN}" \\
