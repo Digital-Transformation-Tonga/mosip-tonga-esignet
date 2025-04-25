@@ -33,15 +33,15 @@ pipeline {
                     sh '''
                         docker build \
                         --no-cache \
-                        --build-arg sign_in_with_esignet_plugin_url="${SIGN_IN_PLUGIN_URL}" \\
-                        --build-arg oidcUIPublicUrl="${OIDC_UI_PUBLIC_URL}" \\
-                        --build-arg uiDefaultTheme="${UI_DEFAULT_THEME}" \\
-                        --build-arg defaultLang="${DEFAULT_LANG}" \\
-                        --build-arg defaultWellknown="${DEFAULT_WELLKNOWN}" \\
-                        --build-arg defaultFevicon="${DEFAULT_FAVICON}" \\
-                        --build-arg defaultTitle="${DEFAULT_TITLE}" \\
-                        --build-arg defaultIdProviderName="${DEFAULT_IDP_NAME}" \\
-                        --build-arg artifactory_url="${ARTIFACTORY_URL}" \\
+                        --build-arg sign_in_with_esignet_plugin_url="${SIGN_IN_PLUGIN_URL}" \
+                        --build-arg oidcUIPublicUrl="${OIDC_UI_PUBLIC_URL}" \
+                        --build-arg uiDefaultTheme="${UI_DEFAULT_THEME}" \
+                        --build-arg defaultLang="${DEFAULT_LANG}" \
+                        --build-arg defaultWellknown="${DEFAULT_WELLKNOWN}" \
+                        --build-arg defaultFevicon="${DEFAULT_FAVICON}" \
+                        --build-arg defaultTitle="${DEFAULT_TITLE}" \
+                        --build-arg defaultIdProviderName="${DEFAULT_IDP_NAME}" \
+                        --build-arg artifactory_url="${ARTIFACTORY_URL}" \
                         -t ${IMAGE_TAG} .
                     '''
                     sh 'docker push ${IMAGE_TAG}'
