@@ -1,0 +1,52 @@
+pipeline {
+    environment {
+        PROJECT = 'egovdigitaltonga'
+        APP_NAME = 'mosip-oidc-ui'
+        BRANCH_NAME = 'deployment_dev'
+        CIR_USER = 'kajakaran095'
+        CIR_PW = credentials('cir-pw')
+        IMAGE_TAG = "${PROJECT}/${APP_NAME}:${BRANCH_NAME}.${env.BUILD_NUMBER}"
+    }
+    agent none
+    options {
+        skipStagesAfterUnstable()
+        disableConcurrentBuilds()
+    }
+    stages {
+        stage('Building & Pushing Image') {
+            agent any
+            steps {
+                sh 'docker login -u ${CIR_USER} -p ${CIR_PW}'
+                dir('oidc-ui') {
+                    sh '''
+                        docker build \
+                        --no-cache \
+                        --build-arg sign_in_with_esignet_plugin_url="https://esignet.dst-dev.mosip.net/plugin.zip" \
+                        --build-arg oidcUIPublicUrl="" \
+                        --build-arg uiDefaultTheme="default" \
+                        --build-arg defaultLang="en" \
+                        --build-arg defaultWellknown="https://esignet.dst-dev.mosip.net/.well-known/openid-configuration" \
+                        --build-arg defaultFevicon="favicon.ico" \
+                        --build-arg defaultTitle="eSignet UI" \
+                        --build-arg defaultIdProviderName="MOSIP" \
+                        --build-arg artifactory_url="http://mosip-file-server.mosip-file-server" \
+                        -t ${IMAGE_TAG} .
+                    '''
+                    sh 'docker push ${IMAGE_TAG}'
+                    sh 'docker image rm ${IMAGE_TAG}'
+                }
+            }
+        }
+        stage('Deploy cluster') {
+            agent {
+                docker {
+                    image 'inovadockerimages/cicdtools:latest'
+                    args '--entrypoint="" -v /root/.kube:/root/.kube'
+                }
+            }
+            steps {
+                sh 'kubectl set image deployment/oidc-ui oidc-ui=${IMAGE_TAG} --record -n esignet'
+            }
+        }
+    }
+}
