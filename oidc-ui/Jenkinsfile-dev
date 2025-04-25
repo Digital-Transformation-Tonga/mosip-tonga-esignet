@@ -31,7 +31,7 @@ pipeline {
                 dir('oidc-ui') {
                     sh 'docker login -u ${CIR_USER} -p ${CIR_PW}'
                     sh """
-                        docker build --no-cache \\
+                        docker build \\
                             --build-arg sign_in_with_esignet_plugin_url="${SIGN_IN_PLUGIN_URL}" \\
                             --build-arg oidcUIPublicUrl="" \\
                             --build-arg uiDefaultTheme="${UI_DEFAULT_THEME}" \\
