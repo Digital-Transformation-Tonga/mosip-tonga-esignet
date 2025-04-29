@@ -1,0 +1,70 @@
+name: Trigger Jenkins Pipeline
+
+on:
+    push:
+        branches:
+            - '*'
+
+jobs:
+    trigger-job:
+        permissions:
+            contents: write
+
+        runs-on: self-hosted
+        steps:
+            - name: Notify build start
+              uses: hasura/comment-progress@v2.3.0
+              with:
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                repository: ${{ github.repository }}
+                number: ${{ github.event.number }}
+                id: build-notification
+                message: "Job has been triggered in Jenkins! 🚀"
+            
+            - name: Trigger Jenkins job
+              id: jenkins
+              uses: Ishh-at-bevolv/jenkins-githubaction@master
+              with:
+                url: "${{ vars.JENKINS_DEV_URL }}"
+                job_name: 'dev-tonga-oidc-ui'
+                username: 'Ishrath'
+                api_token: "${{ secrets.JENKINS_DEV_TOKEN }}"
+                wait: true
+                timeout: '1200'
+
+            - name: Set build status
+              id: set-status
+              if: always()
+              run: |
+                  BUILD_URL="${{ steps.jenkins.outputs.build_url }}"
+                  BUILD_STATUS="${{ steps.jenkins.outputs.build_status }}"
+                  
+                  echo "Build URL: $BUILD_URL"
+                  echo "Build Status: $BUILD_STATUS"
+                  
+                  # Check if the Jenkins build succeeded or failed
+                  if [[ "$BUILD_STATUS" == "SUCCESS" ]]; then
+                    BUILD_RESULT="SUCCESS"
+                    COMMENT="Build was successful! 🎉 [View build]($BUILD_URL)"
+                  elif [[ "$BUILD_STATUS" == "TIMEOUT" ]]; then
+                    BUILD_RESULT="TIMEOUT"
+                    COMMENT="Build timed out ⏰ [View build]($BUILD_URL)"
+                  else
+                    BUILD_RESULT="FAILURE"
+                    COMMENT="Build failed 😒 [View build]($BUILD_URL)"
+                  fi
+        
+                  echo "Comment: $COMMENT"
+                  echo "comment=$COMMENT" >> $GITHUB_OUTPUT
+                
+            - name: Notify build finish
+              uses: hasura/comment-progress@v2.3.0
+              if: always()
+              with:
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                repository: ${{ github.repository }}
+                number: ${{ github.event.number }}
+                id: build-notification
+                append: true
+                message: ${{ steps.set-status.outputs.comment }}
+        
