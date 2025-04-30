@@ -186,9 +186,9 @@ export default function OtpGet({
             text={t1("get_otp")}
             handleClick={sendOTP}
             id="get_otp"
-            disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() || (showCaptcha && captchaToken === null)}
-            // disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() }
-          />
+            // disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() || (showCaptcha && captchaToken === null)}
+            disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() }
+          />s
         </div>
 
         {status.state === states.LOADING && (
