@@ -169,16 +169,16 @@ export default function OtpGet({
           />
         ))}
 
-        {/*{showCaptcha && (*/}
-        {/*  <div className="flex justify-center mt-5 mb-5">*/}
-        {/*    <ReCAPTCHA*/}
-        {/*      hl={i18n.language}*/}
-        {/*      ref={_reCaptchaRef}*/}
-        {/*      onChange={handleCaptchaChange}*/}
-        {/*      sitekey={captchaSiteKey}*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*)}*/}
+        {showCaptcha && (
+          <div className="flex justify-center mt-5 mb-5">
+            <ReCAPTCHA
+              hl={i18n.language}
+              ref={_reCaptchaRef}
+              onChange={handleCaptchaChange}
+              sitekey={captchaSiteKey}
+            />
+          </div>
+        )}
 
         <div className="mt-5 mb-5">
           <FormAction
@@ -186,8 +186,8 @@ export default function OtpGet({
             text={t1("get_otp")}
             handleClick={sendOTP}
             id="get_otp"
-            // disabled={!loginState["Otp_mosip-vid"]?.trim() || (showCaptcha && captchaToken === null)}
-            disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() }
+            disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() || (showCaptcha && captchaToken === null)}
+            // disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() }
           />
         </div>
 
