@@ -60,7 +60,8 @@ export default function OtpGet({
 
   const [captchaToken, setCaptchaToken] = useState(null);
   const _reCaptchaRef = useRef(null);
-  
+  const [combinedValue, setCombinedValue] = useState("");
+
   useEffect(() => {
     let loadComponent = async () => {
       i18n.on("languageChanged", function (lng) {
@@ -89,7 +90,8 @@ export default function OtpGet({
     try {
 
       let transactionId = openIDConnectService.getTransactionId();
-      let vid = loginState["Otp_mosip-vid"];
+      // let vid = loginState["Otp_mosip-vid"];
+      let vid = combinedValue;
 
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
 
@@ -148,7 +150,7 @@ export default function OtpGet({
         />
       )}
 
-      <div className="mt-12">
+      <div className="mt-6">
         {fields.map((field) => (
           <InputWithImage
             key={"Otp_" + field.id}
@@ -163,19 +165,20 @@ export default function OtpGet({
             placeholder={t1(field.placeholder)}
             imgPath="images/photo_scan.png"
             tooltipMsg="vid_info"
+            onCombinedValueChange={(val) => setCombinedValue(val)}
           />
         ))}
 
-        {showCaptcha && (
-          <div className="flex justify-center mt-5 mb-5">
-            <ReCAPTCHA
-              hl={i18n.language}
-              ref={_reCaptchaRef}
-              onChange={handleCaptchaChange}
-              sitekey={captchaSiteKey}
-            />
-          </div>
-        )}
+        {/*{showCaptcha && (*/}
+        {/*  <div className="flex justify-center mt-5 mb-5">*/}
+        {/*    <ReCAPTCHA*/}
+        {/*      hl={i18n.language}*/}
+        {/*      ref={_reCaptchaRef}*/}
+        {/*      onChange={handleCaptchaChange}*/}
+        {/*      sitekey={captchaSiteKey}*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*)}*/}
 
         <div className="mt-5 mb-5">
           <FormAction
@@ -183,7 +186,8 @@ export default function OtpGet({
             text={t1("get_otp")}
             handleClick={sendOTP}
             id="get_otp"
-            disabled={!loginState["Otp_mosip-vid"]?.trim() || (showCaptcha && captchaToken === null)}
+            // disabled={!loginState["Otp_mosip-vid"]?.trim() || (showCaptcha && captchaToken === null)}
+            disabled={combinedValue === "" || !loginState["Otp_mosip-vid"]?.trim() }
           />
         </div>
 

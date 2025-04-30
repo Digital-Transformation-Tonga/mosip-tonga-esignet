@@ -415,3 +415,32 @@ input[type="number"] {
   letter-spacing: 0px;
   padding-top: 10px;
 }
+
+.nav-bar {
+  background-color: var(--nav-bar-bg-color);
+  min-height: 54px;
+}
+
+.nav-bar-content {
+  display: none;
+}
+
+.mode-select-toggle {
+  display: flex;
+  justify-content: space-between;
+}
+.mode-select-toggle-span {
+  font-size: 19px;
+  font-weight: bold;
+  color:var(--signup-banner-signup-url-color);
+  /*color: #123D82;*/
+}
+.content-non-visible {
+  display: none;
+}
+.tonga-logo {
+  content: var(--tonga-logo-url);
+}
+/*.brand-only-logo {*/
+/*    content: var(--brand-only-logo-url);*/
+/*}*/

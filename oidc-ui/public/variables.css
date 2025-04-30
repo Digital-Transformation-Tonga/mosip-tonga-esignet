@@ -6,6 +6,7 @@
   --language-icon-color: #FFFFFF;
   --language-icon-bg-color:  #1262C9;
   --brand-only-logo-url: url("/logo.png");
+  --tonga-logo-url: url("/tonga-logo.png");
   --brand-logo-url: url("/logo.png");
   --background-logo-url: url("/images/illustration_one.png");
   --footer-brand-logo-url: url("/images/footer_logo.png");
@@ -70,6 +71,7 @@
   --forgot-password-width: max-content;
   --forgot-password-margin-top: 1rem;
   --password-google-reCaptcha-margin-top: 3rem;
+  --nav-bar-bg-color: #FF0101;
 }
 
 [class="orange_theme"] {
