@@ -1,0 +1,63 @@
+pipeline {
+    agent none
+    environment {
+        PROJECT = 'egovdigitaltonga'
+        APP_NAME = 'mosip-oidc-ui'
+        BRANCH_NAME = 'deployment_qa'
+        CIR_USER = 'kajakaran095'
+        CIR_PW = credentials('cir-pw')
+        IMAGE_TAG = "${PROJECT}/${APP_NAME}:${BRANCH_NAME}.${env.BUILD_NUMBER}"
+
+        // Docker build arguments
+        SIGN_IN_PLUGIN_URL = 'https://esignet.dst-dev.mosip.net/plugin.zip'
+        OIDC_UI_PUBLIC_URL = ' '
+        UI_DEFAULT_THEME = 'default'
+        DEFAULT_LANG = 'en'
+        DEFAULT_WELLKNOWN = 'https://esignet.dst-dev.mosip.net/.well-known/openid-configuration'
+        DEFAULT_FAVICON = 'favicon.ico'
+        DEFAULT_TITLE = 'eSignet UI'
+        DEFAULT_IDP_NAME = 'MOSIP'
+        ARTIFACTORY_URL = 'http://mosip-file-server.mosip-file-server'
+        IMAGE_NAME = 'esignet-ui'
+    }
+    options {
+        skipStagesAfterUnstable()
+        disableConcurrentBuilds()
+    }
+    stages {
+        stage('Building & Deploy Image') {
+            agent any
+            steps {
+                dir('oidc-ui') {
+                    sh 'docker login -u ${CIR_USER} -p ${CIR_PW}'
+                    sh """
+                        docker build \\
+                            --build-arg sign_in_with_esignet_plugin_url="${SIGN_IN_PLUGIN_URL}" \\
+                            --build-arg oidcUIPublicUrl="" \\
+                            --build-arg uiDefaultTheme="${UI_DEFAULT_THEME}" \\
+                            --build-arg defaultLang="${DEFAULT_LANG}" \\
+                            --build-arg defaultWellknown="${DEFAULT_WELLKNOWN}" \\
+                            --build-arg defaultFevicon="${DEFAULT_FAVICON}" \\
+                            --build-arg defaultTitle="${DEFAULT_TITLE}" \\
+                            --build-arg defaultIdProviderName="${DEFAULT_IDP_NAME}" \\
+                            --build-arg artifactory_url="${ARTIFACTORY_URL}" \\
+                            -t ${IMAGE_TAG} .
+                    """
+                    sh 'docker push ${IMAGE_TAG}'
+                }
+            }
+        }
+
+        stage('Deploy cluster') {
+            agent {
+                docker {
+                    image 'inovadockerimages/cicdtools:latest'
+                    args '--entrypoint="" -v /root/.kube:/root/.kube'
+                }
+            }
+            steps {
+                sh 'kubectl set image deployment/oidc-ui oidc-ui=${IMAGE_TAG} --record -n esignet'
+            }
+        }
+    }
+}
