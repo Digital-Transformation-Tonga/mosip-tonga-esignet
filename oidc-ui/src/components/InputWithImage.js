@@ -31,12 +31,19 @@ export default function InputWithImage({
   errorCode,
   maxLength = "",
   regex = "",
+  onCombinedValueChange
 }) {
 
   const { t: t1 } = useTranslation("translation", { keyPrefix: i18nKeyPrefix1 });
   const { t: t2 } = useTranslation("translation", { keyPrefix: i18nKeyPrefix2 });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [labelValue, setLabelValue] = useState("");
+  const [showError, setShowError] = useState(false);
+
   const [errorBanner, setErrorBanner] = useState([]);
 
   const inputVal = useRef(value);
@@ -141,16 +148,73 @@ export default function InputWithImage({
     setErrorBanner(tempBanner);
     blurChange(e, tempBanner)
   }
+  const handleSelectChange = (event) => {
+    clearInput();
+    const value = event.target.value;
+    const label = event.target.options[event.target.selectedIndex].text;
+    setLabelValue(label);
+    setSelectedOption(value);
+    setIsDropdownOpen((prev) => !prev);
+    setShowError(event.target.value === "");
+    if(event.target.value === ""){
+      onCombinedValueChange("");
+    }
+  };
 
+  const clearInput = () => {
+    setInputValue("");
+  }
+
+  const validateBeforeInput = (event) => {
+    setInputValue(event.target.value);
+    if (selectedOption === "") {
+      setShowError(true);
+    } else {
+      const combinedValue = selectedOption === "tongapassnumber"
+          ? event.target.value
+          : `${event.target.value}@${selectedOption}`;
+      setShowError(false);
+      if (typeof onCombinedValueChange === "function") {
+        onCombinedValueChange(combinedValue);
+      }
+    }
+  };
   return (
     <>
+      <div className="relative flex items-center justify-between mb-4">
+        <select
+            value={selectedOption}
+            onChange={handleSelectChange}
+            onFocus={() => setIsDropdownOpen(true)}
+            onBlur={() => setIsDropdownOpen(false)}
+            className="w-full appearance-none p-2 login-list-box-style"
+        >
+          <option value="">Select mode of login</option>
+          <option value="tongapassnumber">Tonga Pass Number</option>
+          <option value="birthcertificatenumber">Birth Certificate Number</option>
+          <option value="nationalidnumber">National ID Number</option>
+          <option value="passportnumber">Passport Number</option>
+          <option value="drivinglicensenumber">Driving License Number</option>
+        </select>
+
+        {/* Arrow Icon */}
+        <span className="pointer-events-none absolute right-3 top-3 text-gray-600">
+          {isDropdownOpen ? "▲" : "▼"}
+        </span>
+      </div>
+
+      {selectedOption === "" && showError && (
+          <div className="text-red-500 text-sm mt-1 pb-2">
+            Please select a mode of login before entering input.
+          </div>
+      )}
       <div className="flex items-center justify-between">
         <div className="flex justify-start">
           <label
             htmlFor={labelFor}
             className="block mb-2 text-xs font-medium text-gray-900 text-opacity-70"
           >
-            {labelText}
+            {labelValue ||labelText}
           </label>
           {icon && (
             <PopoverContainer child={<img src={infoIcon} className="mx-1 mt-[2px] w-[15px] h-[14px] relative bottom-[1px]" />} content={id.includes("Otp") ? t1("otp_info") : id.includes("sbi") ? t1("bio_info") : id.includes("Pin") ? t1("pin_info") : t1("username_info")} position="right" contentSize="text-xs" />
@@ -175,7 +239,10 @@ export default function InputWithImage({
         <input
           ref={inputVal}
           disabled={disabled}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            validateBeforeInput(e);
+          }}
           onBlur={onBlurChange}
           onKeyDown={handleKeyDown}
           value={value}
