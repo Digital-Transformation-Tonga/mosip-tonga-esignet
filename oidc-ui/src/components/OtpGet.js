@@ -221,7 +221,7 @@ export default function OtpGet({
             text={t1("get_otp")}
             handleClick={sendOTP}
             id="get_otp"
-            disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
+            disabled={combinedValue || !loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
           />
         </div>
 
