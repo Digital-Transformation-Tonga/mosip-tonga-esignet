@@ -105,11 +105,12 @@ export default function OtpGet({
 
       let transactionId = openIDConnectService.getTransactionId();
       // let vid = fields[0].prefix + loginState["Otp_mosip-vid"] + fields[0].postfix;
-      // console.log("loginState[\"Otp_mosip-vid\"]====",loginState["Otp_mosip-vid"]);
-      // console.log("loginState[\"loginState-vid\"]====",loginState);
-      // console.log("fields[0].postfix====",fields[0].postfix);
-      // console.log("fvid===",vid);
-      let vid = combinedValue;
+      let vid = fields[0].prefix + combinedValue + fields[0].postfix;
+      console.log("loginState[\"Otp_mosip-vid\"]====",loginState["Otp_mosip-vid"]);
+      console.log("loginState[\"loginState-vid\"]====",loginState);
+      console.log("fields[0].postfix====",fields[0].postfix);
+      console.log("fvid===",vid);
+      // let vid = combinedValue;
 
       console.log("combinedValue===",combinedValue);
 
@@ -227,8 +228,8 @@ export default function OtpGet({
             text={t1("get_otp")}
             handleClick={sendOTP}
             id="get_otp"
-            disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
             // disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
+            disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
           />
         </div>
 
