@@ -569,9 +569,3 @@ input[type="number"] {
 .content-non-visible {
   display: none;
 }
-.tonga-logo {
-  content: var(--tonga-logo-url);
-}
-/*.brand-only-logo {*/
-/*    content: var(--brand-only-logo-url);*/
-/*}*/
