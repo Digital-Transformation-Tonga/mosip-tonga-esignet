@@ -145,8 +145,7 @@ export default function OtpGet({
         }
         return;
       } else {
-        // onOtpSent(loginState["Otp_mosip-vid"], response);
-        onOtpSent(vid, response);
+        onOtpSent(loginState["Otp_mosip-vid"], response);
         setErrorBanner(null);
       }
     } catch (error) {

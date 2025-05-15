@@ -245,8 +245,8 @@ export default function InputWithImage({
           }}
           onBlur={onBlurChange}
           onKeyDown={handleKeyDown}
-          value={inputValue}
-          type="text"
+          value={value}
+          type={type}
           id={id}
           name={name}
           required={isRequired}
