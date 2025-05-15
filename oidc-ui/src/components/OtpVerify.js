@@ -93,8 +93,6 @@ export default function OtpVerify({
       
       let idvid = fields[0].prefix + vid + fields[0].postfix;
 
-      console.log("idvid======", idvid);
-
       setStatus({ state: states.LOADING, msg: "sending_otp_msg" });
       const sendOtpResponse = await post_SendOtp(
         transactionId,

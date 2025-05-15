@@ -109,8 +109,6 @@ export default function OtpGet({
 
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
 
-      console.log("@@@vid==", vid);
-
       setStatus({ state: states.LOADING, msg: "sending_otp_msg" });
       const sendOtpResponse = await post_SendOtp(
         transactionId,
@@ -201,7 +199,7 @@ export default function OtpGet({
             prefix={field.prefix}
             errorCode={field.errorCode}
             maxLength={field.maxLength}
-            regex=""
+            regex={field.regex}
             icon={field.infoIcon}
             onCombinedValueChange={(val) => setCombinedValue(val)}
           />

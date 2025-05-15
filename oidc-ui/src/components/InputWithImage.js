@@ -177,7 +177,6 @@ export default function InputWithImage({
       if (typeof onCombinedValueChange === "function") {
         onCombinedValueChange(combinedValue);
       }
-
     }
   };
   return (
