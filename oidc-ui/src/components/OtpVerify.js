@@ -64,6 +64,8 @@ export default function OtpVerify({
   const [otpSentMobile, setOtpSentMobile] = useState("");
   const [errorBanner, setErrorBanner] = useState(null);
 
+  const [combinedValue1, setCombinedValue1] = useState("");
+
   let pin = useRef();
 
   const navigate = useNavigate();
@@ -91,7 +93,10 @@ export default function OtpVerify({
       let transactionId = openIDConnectService.getTransactionId();
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
       
-      let idvid = fields[0].prefix + vid + fields[0].postfix;
+      // let idvid = fields[0].prefix + vid + fields[0].postfix;
+      let idvid = combinedValue1;
+      console.log("Otp ========", combinedValue1);
+      console.log("Otp vid@@@@", vid);
 
       setStatus({ state: states.LOADING, msg: "sending_otp_msg" });
       const sendOtpResponse = await post_SendOtp(
@@ -300,6 +305,7 @@ export default function OtpVerify({
               prefix={field.prefix}
               maxLength={field.maxLength}
               regex={field.regex}
+              onCombinedValueChange1={(val) => setCombinedValue1(val)}
             />
           ))}
         </div>

@@ -18,7 +18,8 @@ export default function OtpGet({
   openIDConnectService,
   onOtpSent,
   i18nKeyPrefix1 = "otp",
-  i18nKeyPrefix2 = "errors"
+  i18nKeyPrefix2 = "errors",
+  onCombinedValueChange1
 }) {
 
   const { t: t1, i18n } = useTranslation("translation", {
@@ -106,6 +107,7 @@ export default function OtpGet({
       let transactionId = openIDConnectService.getTransactionId();
       // let vid = fields[0].prefix + loginState["Otp_mosip-vid"] + fields[0].postfix;
       let vid = fields[0].prefix + combinedValue + fields[0].postfix;
+      onCombinedValueChange1(vid);
 
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
 
@@ -189,7 +191,7 @@ export default function OtpGet({
             labelFor={field.labelFor}
             id={"Otp_" + field.id}
             name={field.name}
-            type={field.type}
+            type="text"
             isRequired={field.isRequired}
             placeholder={t1(field.placeholder)}
             customClass={inputCustomClass}
