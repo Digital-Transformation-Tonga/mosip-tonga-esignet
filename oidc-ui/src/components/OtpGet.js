@@ -109,6 +109,8 @@ export default function OtpGet({
 
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
 
+      console.log("@@@vid==", vid);
+
       setStatus({ state: states.LOADING, msg: "sending_otp_msg" });
       const sendOtpResponse = await post_SendOtp(
         transactionId,
@@ -145,7 +147,8 @@ export default function OtpGet({
         }
         return;
       } else {
-        onOtpSent(loginState["Otp_mosip-vid"], response);
+        // onOtpSent(loginState["Otp_mosip-vid"], response);
+        onOtpSent(vid, response);
         setErrorBanner(null);
       }
     } catch (error) {
