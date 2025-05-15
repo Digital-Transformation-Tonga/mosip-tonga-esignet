@@ -177,6 +177,7 @@ export default function InputWithImage({
       if (typeof onCombinedValueChange === "function") {
         onCombinedValueChange(combinedValue);
       }
+
     }
   };
   return (
@@ -245,8 +246,8 @@ export default function InputWithImage({
           }}
           onBlur={onBlurChange}
           onKeyDown={handleKeyDown}
-          value={value}
-          type={type}
+          value={inputValue}
+          type="text"
           id={id}
           name={name}
           required={isRequired}
