@@ -198,7 +198,7 @@ export default function OtpGet({
             prefix={field.prefix}
             errorCode={field.errorCode}
             maxLength={field.maxLength}
-            regex={field.regex}
+            regex=""
             icon={field.infoIcon}
             onCombinedValueChange={(val) => setCombinedValue(val)}
           />
