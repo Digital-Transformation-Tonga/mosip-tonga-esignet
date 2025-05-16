@@ -145,7 +145,7 @@ export default function OtpGet({
         }
         return;
       } else {
-        onOtpSent(loginState["Otp_mosip-vid"], response);
+        onOtpSent(vid, response);
         setErrorBanner(null);
       }
     } catch (error) {
@@ -189,7 +189,7 @@ export default function OtpGet({
             labelFor={field.labelFor}
             id={"Otp_" + field.id}
             name={field.name}
-            type={field.type}
+            type="text"
             isRequired={field.isRequired}
             placeholder={t1(field.placeholder)}
             customClass={inputCustomClass}
