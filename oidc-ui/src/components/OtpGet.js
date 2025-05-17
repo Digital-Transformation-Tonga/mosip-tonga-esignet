@@ -105,7 +105,7 @@ export default function OtpGet({
 
       let transactionId = openIDConnectService.getTransactionId();
       // let vid = fields[0].prefix + loginState["Otp_mosip-vid"] + fields[0].postfix;
-      let vid = fields[0].prefix + combinedValue + fields[0].postfix;
+      let vid = (fields[0].prefix + combinedValue + fields[0].postfix).toLowerCase();
 
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
 
@@ -221,7 +221,7 @@ export default function OtpGet({
             text={t1("get_otp")}
             handleClick={sendOTP}
             id="get_otp"
-            disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
+            // disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
           />
         </div>
 
