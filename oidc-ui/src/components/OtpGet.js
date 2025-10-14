@@ -218,21 +218,13 @@ export default function OtpGet({
         )}
         <div className="mt-5 mb-5">
           <FormAction
-              type={buttonTypes.button}
-              text={t1("get_otp")}
-              handleClick={sendOTP}
-              id="get_otp"
+            type={buttonTypes.button}
+            text={t1("get_otp")}
+            handleClick={sendOTP}
+            id="get_otp"
+            disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
           />
         </div>
-        {/*<div className="mt-5 mb-5">*/}
-        {/*  <FormAction*/}
-        {/*    type={buttonTypes.button}*/}
-        {/*    text={t1("get_otp")}*/}
-        {/*    handleClick={sendOTP}*/}
-        {/*    id="get_otp"*/}
-        {/*    disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}*/}
-        {/*  />*/}
-        {/*</div>*/}
 
         {status.state === states.LOADING && (
           <LoadingIndicator size="medium" message={status.msg} />
