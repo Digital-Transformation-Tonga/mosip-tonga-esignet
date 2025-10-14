@@ -66,6 +66,7 @@ export default function OtpGet({
 
   const [captchaToken, setCaptchaToken] = useState(null);
   const _reCaptchaRef = useRef(null);
+  const [combinedValue, setCombinedValue] = useState("");
 
   useEffect(() => {
     let loadComponent = async () => {
@@ -106,7 +107,8 @@ export default function OtpGet({
     try {
 
       let transactionId = openIDConnectService.getTransactionId();
-      let vid = fields[0].prefix + loginState["Otp_mosip-vid"] + fields[0].postfix;
+      // let vid = fields[0].prefix + loginState["Otp_mosip-vid"] + fields[0].postfix;
+      let vid = (fields[0].prefix + combinedValue + fields[0].postfix).toLowerCase();
 
       let otpChannels = commaSeparatedChannels.split(",").map((x) => x.trim());
 
@@ -145,7 +147,7 @@ export default function OtpGet({
         }
         return;
       } else {
-        onOtpSent(loginState["Otp_mosip-vid"], response);
+        onOtpSent(vid, response);
         setErrorBanner(null);
       }
     } catch (error) {
@@ -189,7 +191,7 @@ export default function OtpGet({
             labelFor={field.labelFor}
             id={"Otp_" + field.id}
             name={field.name}
-            type={field.type}
+            type="text"
             isRequired={field.isRequired}
             placeholder={t1(field.placeholder)}
             customClass={inputCustomClass}
@@ -198,8 +200,9 @@ export default function OtpGet({
             prefix={field.prefix}
             errorCode={field.errorCode}
             maxLength={field.maxLength}
-            regex={field.regex}
+            regex=""
             icon={field.infoIcon}
+            onCombinedValueChange={(val) => setCombinedValue(val)}
           />
         ))}
 
@@ -213,16 +216,23 @@ export default function OtpGet({
             />
           </div>
         )}
-
         <div className="mt-5 mb-5">
           <FormAction
-            type={buttonTypes.button}
-            text={t1("get_otp")}
-            handleClick={sendOTP}
-            id="get_otp"
-            disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}
+              type={buttonTypes.button}
+              text={t1("get_otp")}
+              handleClick={sendOTP}
+              id="get_otp"
           />
         </div>
+        {/*<div className="mt-5 mb-5">*/}
+        {/*  <FormAction*/}
+        {/*    type={buttonTypes.button}*/}
+        {/*    text={t1("get_otp")}*/}
+        {/*    handleClick={sendOTP}*/}
+        {/*    id="get_otp"*/}
+        {/*    disabled={!loginState["Otp_mosip-vid"]?.trim() || inputError || (showCaptcha && captchaToken === null)}*/}
+        {/*  />*/}
+        {/*</div>*/}
 
         {status.state === states.LOADING && (
           <LoadingIndicator size="medium" message={status.msg} />

@@ -339,7 +339,7 @@ export default function OtpVerify({
               labelFor={field.labelFor}
               id={"Otp_" + field.id}
               name={field.name}
-              type={field.type}
+              type="text"
               isRequired={field.isRequired}
               placeholder={t1(field.placeholder)}
               customClass={inputCustomClass}
