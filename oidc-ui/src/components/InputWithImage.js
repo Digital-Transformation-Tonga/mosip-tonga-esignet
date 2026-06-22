@@ -40,7 +40,6 @@ export default function InputWithImage({
   const [showPassword, setShowPassword] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
   const [labelValue, setLabelValue] = useState("");
   const [showError, setShowError] = useState(false);
 
@@ -54,23 +53,126 @@ export default function InputWithImage({
     setShowPassword(!showPassword);
   };
 
-  const handleKeyDown = (e) => {
+  const getValidationError = (val, option) => {
+    if (!option || val === "") return null;
 
+    if (option === "tongapassnumber") {
+      if (!/^\d+$/.test(val)) {
+        return {
+          errorCode: "tonga_pass_number_invalid_chars",
+          message: "Tonga Pass Number must contain digits only"
+        };
+      }
+      if (val.length !== 10) {
+        return {
+          errorCode: "tonga_pass_number_invalid",
+          message: "Tonga Pass Number must be 10 digits"
+        };
+      }
+    }
+
+    if (option === "nationalidnumber") {
+      if (!/^\d+$/.test(val)) {
+        return {
+          errorCode: "national_id_number_invalid_chars",
+          message: "National ID Number must contain digits only"
+        };
+      }
+      if (val.length !== 15) {
+        return {
+          errorCode: "national_id_number_invalid",
+          message: "National ID Number must be 15 digits"
+        };
+      }
+    }
+
+    if (option === "passportnumber") {
+      if (val.length !== 7 || !/^[a-zA-Z]\d{6}$/.test(val)) {
+        return {
+          errorCode: "passport_number_invalid",
+          message: "Passport Number must be 1 letter and 6 digits"
+        };
+      }
+    }
+
+    if (option === "drivinglicensenumber") {
+      if (!/^\d+$/.test(val)) {
+        return {
+          errorCode: "driving_license_number_invalid_chars",
+          message: "Driving License Number must contain digits only"
+        };
+      }
+      if (val.length !== 6) {
+        return {
+          errorCode: "driving_license_number_invalid",
+          message: "Driving License Number must be 6 digits"
+        };
+      }
+    }
+
+    return null;
+  };
+
+  const handleKeyDown = (e) => {
     var keyCode = e.key || e.which;
+
+    // Allow some special keys like Backspace, Tab, Home, End, Left Arrow, Right Arrow, Delete, Enter.
+    const allowedKeyCodes =
+      ['Backspace', 'Tab', 'Control', 'End', 'Home', 'ArrowLeft', 'ArrowRight', 'Delete', 'Enter'];
+
+    if (allowedKeyCodes.includes(keyCode)) {
+      return;
+    }
 
     // multiKeyChecking function checks if the key is
     // ctrl + a, ctrl + c, ctrl + v
-    // while pasting it will also check maxlength
-    const multiKeyChecking = (key, ctrl, maxLength) => {
-      if (
-        ctrl &&
-        (key === "a" || key === "c"
-          || (key === "v" && checkMaxLength(maxLength)))
-      ) {
+    const multiKeyChecking = (key, ctrl) => {
+      if (ctrl && (key === "a" || key === "c" || key === "v")) {
         return true;
       }
       return false;
     };
+
+    if (multiKeyChecking(keyCode, e.ctrlKey)) {
+      return;
+    }
+
+    const val = e.target.value;
+    const isSelectionActive = e.target.selectionStart !== e.target.selectionEnd;
+
+    if (selectedOption) {
+      let allowedMax = "";
+      if (selectedOption === "tongapassnumber") allowedMax = 10;
+      else if (selectedOption === "nationalidnumber") allowedMax = 15;
+      else if (selectedOption === "passportnumber") allowedMax = 7;
+      else if (selectedOption === "drivinglicensenumber") allowedMax = 6;
+
+      if (allowedMax !== "" && val.length >= allowedMax && !isSelectionActive) {
+        e.preventDefault();
+        return;
+      }
+
+      if (selectedOption === "tongapassnumber" || selectedOption === "nationalidnumber" || selectedOption === "drivinglicensenumber") {
+        if (!/^\d$/.test(keyCode)) {
+          e.preventDefault();
+          return;
+        }
+      } else if (selectedOption === "passportnumber") {
+        const insertIndex = e.target.selectionStart;
+        if (insertIndex === 0 && !isSelectionActive) {
+          if (!/^[a-zA-Z]$/.test(keyCode)) {
+            e.preventDefault();
+            return;
+          }
+        } else {
+          if (!/^\d$/.test(keyCode)) {
+            e.preventDefault();
+            return;
+          }
+        }
+      }
+      return;
+    }
 
     // checking max length for the input
     const checkMaxLength = (maxLength) =>
@@ -85,47 +187,63 @@ export default function InputWithImage({
       }
       if (type === "letter") {
         // Check if the pressed key is a letter (a-zA-Z)
-        // Lower & upper case letters a-z
-        // Prevent input of other characters
         return /^[a-zA-Z]$/.test(key);
       }
       if (type === "alpha-numeric") {
         // Check if the pressed key is a number (0-9) or a letter (a-zA-Z)
-        // Numpad numbers 0-9
-        // Prevent input of other characters
         return /^[a-zA-Z\d]$/.test(key);
       }
 
       return true
     }
 
+    // checking max length for the input
+    // if greater than the max length then prevent the default action
+    if (!checkMaxLength(maxLength)) {
+      e.preventDefault();
+    }
 
-    // Allow some special keys like Backspace, Tab, Home, End, Left Arrow, Right Arrow, Delete.
-    const allowedKeyCodes =
-      ['Backspace', 'Tab', 'Control', 'End', 'Home', 'ArrowLeft', 'ArrowRight', 'Delete'];
-
-    if (!allowedKeyCodes.includes(keyCode) && !multiKeyChecking(keyCode, e.ctrlKey, maxLength)) {
-      // checking max length for the input
-      // if greater than the max length then prevent the default action
-      if (!checkMaxLength(maxLength)) {
-        e.preventDefault();
-      }
-
-      // checking patter for number, letter & alpha-numeric
-      if (!patternTest(type, keyCode)) {
-        e.preventDefault();
-      }
+    // checking patter for number, letter & alpha-numeric
+    if (!patternTest(type, keyCode)) {
+      e.preventDefault();
     }
   }
 
   const onBlurChange = (e) => {
     const val = e.target.value;
     const id = e.target.id;
+    let tempBanner = errorBanner.map((_) => ({ ..._, show: true }));
+    let bannerIndex = tempBanner.findIndex((_) => _.id === id);
+
+    if (selectedOption) {
+      const error = getValidationError(val, selectedOption);
+      if (error) {
+        if (bannerIndex > -1) {
+          tempBanner[bannerIndex] = {
+            id,
+            errorCode: error.errorCode,
+            message: error.message,
+            show: true
+          };
+        } else {
+          tempBanner.push({
+            id,
+            errorCode: error.errorCode,
+            message: error.message,
+            show: true
+          });
+        }
+      } else {
+        if (bannerIndex > -1) {
+          tempBanner.splice(bannerIndex, 1);
+        }
+      }
+      setErrorBanner(tempBanner);
+      blurChange(e, tempBanner);
+      return;
+    }
+
     const currentRegex = new RegExp(regex);
-    let bannerIndex = errorBanner.findIndex((_) => _.id === id);
-    let tempBanner = errorBanner.map((_) => {
-      return { ..._, show: true };
-    });
     // checking regex matching for username & password
     if (currentRegex.test(val) || val === "") {
       // if username or password is matched
@@ -148,6 +266,7 @@ export default function InputWithImage({
     setErrorBanner(tempBanner);
     blurChange(e, tempBanner)
   }
+
   const handleSelectChange = (event) => {
     clearInput();
     const value = event.target.value;
@@ -162,20 +281,65 @@ export default function InputWithImage({
   };
 
   const clearInput = () => {
-    setInputValue("");
+    handleChange({ target: { id: id, value: "" } });
+    setErrorBanner([]);
+    blurChange({ target: { id: id, value: "" } }, []);
   }
 
   const validateBeforeInput = (event) => {
-    setInputValue(event.target.value);
+    let val = event.target.value;
+
+    if (selectedOption) {
+      // Sanitize input based on selectedOption
+      if (selectedOption === "tongapassnumber" || selectedOption === "nationalidnumber" || selectedOption === "drivinglicensenumber") {
+        val = val.replace(/\D/g, "");
+        let maxLen = selectedOption === "tongapassnumber" ? 10 : selectedOption === "nationalidnumber" ? 15 : 6;
+        val = val.slice(0, maxLen);
+      } else if (selectedOption === "passportnumber") {
+        let firstChar = val.slice(0, 1);
+        if (firstChar && !/^[a-zA-Z]$/.test(firstChar)) {
+          firstChar = "";
+        }
+        let rest = val.slice(1).replace(/\D/g, "");
+        val = (firstChar + rest).slice(0, 7);
+      }
+    }
+
+    event.target.value = val;
+
     if (selectedOption === "") {
       setShowError(true);
     } else {
       const combinedValue = selectedOption === "tongapassnumber"
-          ? event.target.value
-          : `${event.target.value}@${selectedOption}`;
+          ? val
+          : `${val}@${selectedOption}`;
       setShowError(false);
       if (typeof onCombinedValueChange === "function") {
         onCombinedValueChange(combinedValue);
+      }
+
+      // If there was an error banner active, validate real-time to remove/update it
+      let error = getValidationError(val, selectedOption);
+      let tempBanner = errorBanner.map((_) => ({ ..._, show: true }));
+      let bannerIndex = tempBanner.findIndex((_) => _.id === id);
+
+      if (!error) {
+        if (bannerIndex > -1) {
+          tempBanner.splice(bannerIndex, 1);
+        }
+      } else {
+        if (bannerIndex > -1) {
+          tempBanner[bannerIndex] = {
+            id,
+            errorCode: error.errorCode,
+            message: error.message,
+            show: true
+          };
+        }
+      }
+      setErrorBanner(tempBanner);
+      if (typeof blurChange === "function") {
+        blurChange(event, tempBanner);
       }
     }
   };
@@ -274,7 +438,7 @@ export default function InputWithImage({
           if (item.id === id) {
             return (
               <div className="bg-[#FAEFEF] text-[#D52929] text-sm pb-1 pt-[2px] px-2 rounded-b-md font-semibold" key={id}>
-                {t2(`${item.errorCode}`)}
+                {t2(item.errorCode, item.message || item.errorCode)}
               </div>
             )
           }

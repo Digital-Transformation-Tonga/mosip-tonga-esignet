@@ -538,6 +538,13 @@
       "508": "Server has detected an infinite loop while processing the request",
       "510": "Further extensions are required for the server to be able to fulfil the request",
       "511": "Client needs to authenticate to gain network access"
-    }
+    },
+    "tonga_pass_number_invalid": "Tonga Pass Number must be 10 digits",
+    "tonga_pass_number_invalid_chars": "Tonga Pass Number must contain digits only",
+    "national_id_number_invalid": "National ID Number must be 15 digits",
+    "national_id_number_invalid_chars": "National ID Number must contain digits only",
+    "passport_number_invalid": "Passport Number must be 1 letter and 6 digits",
+    "driving_license_number_invalid": "Driving License Number must be 6 digits",
+    "driving_license_number_invalid_chars": "Driving License Number must contain digits only"
   }
 }
